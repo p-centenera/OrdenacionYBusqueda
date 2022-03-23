@@ -8,8 +8,16 @@ import java.util.stream.*;
 import java.io.*;
 import java.util.Arrays;
 
+/**
+ * @author Paloma Centenera
+ */
 public class AnalisisEmpiricoOrdenacionYBusqueda {
 
+    /**
+     * Análisis empírico de los algoritmos de ordenación y búsqueda.
+     * Ejemplares: array de elementos aleatorios, array oredenado y array en orden inverso. Tamaños 100, 1000, 10000, 100000, 1000000, 10000000.
+     * El resultado del análisis, los tiempos de ejecución de los algoritmos para los distintos ejemplares, se graba en el fichero tiempos.txt, en el directorio del proyecto
+     */
     public static void main(String[] args) {
     Function<long[], long[]>  BubbleSort = L->
     {
