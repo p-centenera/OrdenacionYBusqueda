@@ -18,6 +18,15 @@ public class AnalisisEmpiricoOrdenacionYBusqueda {
      * Ejemplares: array de elementos aleatorios, array oredenado y array en orden inverso. Tamaños 100, 1000, 10000, 100000, 1000000, 10000000.
      * El resultado del análisis, los tiempos de ejecución de los algoritmos para los distintos ejemplares, se graba en el fichero tiempos.txt, en el directorio del proyecto
      */
+   public static void desordena(long[] L){
+       Random random=new Random(L.length);
+       for (int i=0;i<L.length;i++){
+           int p=random.nextInt(L.length);
+           long aux=L[i];
+           L[i]=L[p];
+           L[p]=aux;
+       }
+   }
     public static void main(String[] args) {
     Function<long[], long[]>  BubbleSort = L->
     {
@@ -40,10 +49,10 @@ public class AnalisisEmpiricoOrdenacionYBusqueda {
         Random random =new Random();
 
         for (int i=0;i<6;i++){
-            JuegoPruebasAleatorio[i]= random.longs().map(Math::abs).
-                    limit(tam).toArray();
+            JuegoPruebasAleatorio[i]= Stream.iterate( (long) 0, x -> x + 1).limit(tam).mapToLong(x->x).toArray();
+            desordena(JuegoPruebasAleatorio[i]);
             JuegoPruebasOrdenado[i]=Stream.iterate( (long) 0, x -> x + 1).limit(tam).mapToLong(x->x).toArray();
-            JuegoPruebasInverso[i]=Stream.iterate(tam, x -> x - 1).limit(tam).mapToLong(x->x).toArray();
+            JuegoPruebasInverso[i]=Stream.iterate(tam-1, x -> x - 1).limit(tam).mapToLong(x->x).toArray();
             tam*=10;
         }
         try{
@@ -51,20 +60,20 @@ public class AnalisisEmpiricoOrdenacionYBusqueda {
             FileWriter fichero = new FileWriter("tiempos.txt");
             PrintWriter out = new PrintWriter(fichero);
             long[] resultado;
-            for (int i=0;i<2;i++){
+            for (int i=0;i<6;i++){
                 out.print(tam+"\t");
                 System.out.println("tamaño: "+tam);
                 resultado=Analizador.analiza(JuegoPruebasAleatorio[i],BubbleSort,out);
-                System.out.println("aleatorio: "+Arrays.toString(JuegoPruebasAleatorio[i]));
-                System.out.println("ordenado: "+Arrays.toString(resultado));
+                //System.out.println("aleatorio: "+Arrays.toString(JuegoPruebasAleatorio[i]));
+                //System.out.println("ordenado: "+Arrays.toString(resultado));
 
                 resultado=Analizador.analiza(JuegoPruebasOrdenado[i],BubbleSort,out);
-                System.out.println("ya ordenado: "+Arrays.toString(JuegoPruebasOrdenado[i]));
-                System.out.println("ordenado: "+Arrays.toString(resultado));
+                //System.out.println("ya ordenado: "+Arrays.toString(JuegoPruebasOrdenado[i]));
+                //System.out.println("ordenado: "+Arrays.toString(resultado));
 
                 resultado=Analizador.analiza(JuegoPruebasInverso[i],BubbleSort,out);
-                System.out.println("inverso: "+Arrays.toString(JuegoPruebasInverso[i]));
-                System.out.println("ordenado: "+Arrays.toString(resultado));
+                //System.out.println("inverso: "+Arrays.toString(JuegoPruebasInverso[i]));
+               // System.out.println("ordenado: "+Arrays.toString(resultado));
                 out.println();
                  tam*=10;
             }
