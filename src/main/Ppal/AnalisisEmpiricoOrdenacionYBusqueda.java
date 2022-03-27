@@ -104,11 +104,11 @@ public class AnalisisEmpiricoOrdenacionYBusqueda {
         long[] [] JuegoPruebasAleatorio =new long[6][];
         long [] []  JuegoPruebasOrdenado =new long[6][];
         long [] []  JuegoPruebasInverso =new long[6][];
-        long tam= 100;
+        long tam= 10;
 
         Random random =new Random();
 
-        for (int i=0;i<4;i++){
+        for (int i=0;i<5;i++){
             JuegoPruebasAleatorio[i]= Stream.iterate( (long) 0, x -> x + 1).limit(tam).mapToLong(x->x).toArray();
             desordena(JuegoPruebasAleatorio[i]);
             JuegoPruebasOrdenado[i]=Stream.iterate( (long) 0, x -> x + 1).limit(tam).mapToLong(x->x).toArray();
@@ -116,14 +116,14 @@ public class AnalisisEmpiricoOrdenacionYBusqueda {
             tam*=10;
         }
 
-        tam=100;
+        tam=10;
         FileWriter fichero = new FileWriter("tiempos.txt");
         PrintWriter out;
 
         out= new PrintWriter(fichero);
 
         long[] resultado;
-        for (int i=0;i<34;i++){
+        for (int i=0;i<5;i++){
                 out.print(tam+"\t");
                 System.out.println("tamaño: "+tam);
                 System.out.println("Burbuja");
