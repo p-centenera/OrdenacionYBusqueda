@@ -1,6 +1,7 @@
 package Modelo;
 import java.io.*;
 import java.util.function.Function;
+import java.util.function.BiFunction;
 
 /**
  * @author Paloma Centenera
@@ -19,5 +20,12 @@ public class Analizador {
         long duracion=System.nanoTime()-inicio;
         out.print(duracion+"\t");
         return aux;
+    }
+    public static long  analizaBusqueda(long[] data,long e, BiFunction <long[],Long,Long> F,  PrintWriter out) {
+        long inicio=System.nanoTime();
+        long p=F.apply(data,e);
+        long duracion=System.nanoTime()-inicio;
+        out.print(duracion+"\t");
+        return p;
     }
 }
