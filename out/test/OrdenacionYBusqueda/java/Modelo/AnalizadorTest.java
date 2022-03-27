@@ -1,9 +1,10 @@
 package Modelo;
 
+import org.junit.jupiter.api.*;
 
 class AnalizadorTest {
 
-    @org.junit.jupiter.api.Test
-    void analiza() {
+    @Test
+    void analizaTest() {
     }
 }
