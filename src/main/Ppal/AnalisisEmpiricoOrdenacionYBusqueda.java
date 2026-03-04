@@ -27,29 +27,59 @@ public class AnalisisEmpiricoOrdenacionYBusqueda {
             L[p]=aux;
         }
     }
+    public static long[] seleccionsort(long[] L){
+        for (int i = 0; i < L.length - 1; i++) {
+            int min = i;
+            for (int j = i + 1; j < L.length; j++)
+                if (L[j] < L[min]) min = j;
+            long aux=L[i];
+            L[i]=L[min];
+            L[min]=aux;
+        }
+        return L;
+    }
+    public static long[] insertionsort(long[] L){
+        for (int i = 1; i < L.length; i++) {
+            long cart = L[i];
+            int j = i - 1;
+            while (j >= 0 && L[j] > cart) {
+                L[j + 1] = L[j];
+                j--;
+            }
+            L[j + 1] = cart;
+        }
+        return L;
+    }
+    public static long [] bubblesort(long[] L){
+        for (int i = 1; i < L.length; i++)
+            for (int j = L.length - 1; j >= i; j--)
+                if (L[j - 1] > L[j]) {
+                    long Aux=L[j];
+                    L[j]=L[j-1];
+                    L[j-1]=Aux;
+                }
+        return L;
+    }
     public static long [] quicksort(long[] A, int izq, int der) {
-
-        long pivote=A[izq]; // tomamos primer elemento como pivote
+        if (izq >= der) return A; // caso base: el array se ha ordenado
+        long pivote=A[(izq+der)/2]; // tomamos primer elemento como pivote
         int i=izq;         // i realiza la búsqueda de izquierda a derecha
         int j=der;         // j realiza la búsqueda de derecha a izquierda
         long aux;
 
         while(i < j){                          // mientras no se crucen las búsquedas
-            while(A[i] <= pivote && i < j) i++; // busca elemento mayor que pivote
+            while(A[i] < pivote ) i++; // busca elemento mayor que pivote
             while(A[j] > pivote) j--;           // busca elemento menor que pivote
-            if (i < j) {                        // si no se han cruzado
+            if (i <=j) {                        // si no se han cruzado
                 aux= A[i];                      // los intercambia
                 A[i]=A[j];
                 A[j]=aux;
             }
         }
 
-        A[izq]=A[j];      // se coloca el pivote en su lugar de forma que tendremos
-        A[j]=pivote;      // los menores a su izquierda y los mayores a su derecha
 
-        if(izq < j-1)
             quicksort(A,izq,j-1);          // ordenamos subarray izquierdo
-        if(j+1 < der)
+
             quicksort(A,j+1,der);          // ordenamos subarray derecho
         return A;
     }
@@ -81,24 +111,20 @@ public class AnalisisEmpiricoOrdenacionYBusqueda {
         return A;
     }
     public static void main(String[] args) throws IOException{
-    Function<long[], long[]>  BubbleSort = L->
-    {
-        for (int i = 1; i < L.length; i++)
-            for (int j = L.length - 1; j >= i; j--)
-                if (L[j - 1] > L[j]) {
-                    long Aux=L[j];
-                    L[j]=L[j-1];
-                    L[j-1]=Aux;
-                }
-        return L;
+       Function<long[], long[]> seleccionsort = x -> seleccionsort(x);
+       Function<long[], long[]> insertionsort = x -> insertionsort(x);
+       Function<long[], long[]> bubblesort = x -> bubblesort(x);
+       Function<long[], long[]> quicksort = x -> quicksort(x,0,x.length-1);
+       Function<long[], long[]> mergesort = x -> mergesort(x,0,x.length-1);
+    Function<long[], long[]> [] AlgoritmosOrdenacion = new Function[]{
+            seleccionsort,
+            insertionsort,
+            bubblesort,
+            quicksort,
+            mergesort
     };
+    String [] NombresAlgoritmos={"SeleccionSort","InsertionSort","BubbleSort","QuickSort","MergeSort"};
 
-    Function<long[], long[]>  MergeSort = L->
-     mergesort(L,0,L.length-1);
-
-
-    Function<long[], long[]>  QuickSort = L->
-    quicksort(L,0,L.length-1);
 
 
         long[] [] JuegoPruebasAleatorio =new long[6][];
@@ -124,50 +150,38 @@ public class AnalisisEmpiricoOrdenacionYBusqueda {
 
         long[] resultado;
         for (int i=0;i<5;i++){
-                out.print(tam+"\t");
+                out.print(tam+"\n");
                 System.out.println("tamaño: "+tam);
-                System.out.println("Burbuja");
+                for (int j=0;j<AlgoritmosOrdenacion.length;j++) {
+                    out.print(NombresAlgoritmos[j] + "\n");
+                    System.out.println(NombresAlgoritmos[j]);
+                    try{
 
-                resultado=Analizador.analiza(JuegoPruebasAleatorio[i],BubbleSort,out);
- //               System.out.println("aleatorio: "+Arrays.toString(JuegoPruebasAleatorio[i]));
- //               System.out.println("ordenado: "+Arrays.toString(resultado));
+                        resultado = Analizador.analiza(JuegoPruebasAleatorio[i], AlgoritmosOrdenacion[j], out);
 
-                resultado=Analizador.analiza(JuegoPruebasOrdenado[i],BubbleSort,out);
- //               System.out.println("ya ordenado: "+Arrays.toString(JuegoPruebasOrdenado[i]));
- //               System.out.println("ordenado: "+Arrays.toString(resultado));
+                        if (tam<10000){
+                            System.out.println("Ejemplar aleatorio: "+Arrays.toString(JuegoPruebasAleatorio[i]));
+                            System.out.println("Resultado: "+Arrays.toString(resultado));
+                        }
+                    }catch (StackOverflowError e){
+                        System.out.println("Desbordamiento de pila. Algoritmo"+NombresAlgoritmos[j]+", juego de pruebas aleatorio, no soporta el tamaño "+tam);
+                        out.println("Desbordamiento de pila. Algoritmo"+NombresAlgoritmos[j]+", juego de pruebas aleatorio, no soporta el tamaño "+tam);
+                    }
+                    try {
+                        resultado = Analizador.analiza(JuegoPruebasOrdenado[i], AlgoritmosOrdenacion[j], out);
+                    }catch (StackOverflowError e){
+                        System.out.println("Desbordamiento de pila. Algoritmo"+NombresAlgoritmos[j]+", juego de pruebas ordenado, no soporta el tamaño "+tam);
+                        out.println("Desbordamiento de pila. Algoritmo"+NombresAlgoritmos[j]+", juego de pruebas ordenado, no soporta el tamaño "+tam);
+                    }
+                    try{
+                        resultado = Analizador.analiza(JuegoPruebasInverso[i], AlgoritmosOrdenacion[j], out);
 
-                resultado=Analizador.analiza(JuegoPruebasInverso[i],BubbleSort,out);
-  //              System.out.println("inverso: "+Arrays.toString(JuegoPruebasInverso[i]));
-  //              System.out.println("ordenado: "+Arrays.toString(resultado));
-                out.println();
-
-                System.out.println("QuickSort");
-                resultado=Analizador.analiza(JuegoPruebasAleatorio[i],QuickSort,out);
-   //             System.out.println("aleatorio: "+Arrays.toString(JuegoPruebasAleatorio[i]));
-   //             System.out.println("ordenado: "+Arrays.toString(resultado));
-
-                resultado=Analizador.analiza(JuegoPruebasOrdenado[i],QuickSort,out);
-   //             System.out.println("ya ordenado: "+Arrays.toString(JuegoPruebasOrdenado[i]));
-   //             System.out.println("ordenado: "+Arrays.toString(resultado));
-
-                resultado=Analizador.analiza(JuegoPruebasInverso[i],QuickSort,out);
-    //            System.out.println("inverso: "+Arrays.toString(JuegoPruebasInverso[i]));
-    //            System.out.println("ordenado: "+Arrays.toString(resultado));
-                out.println();
-
-                System.out.println("MergeSort");
-                resultado=Analizador.analiza(JuegoPruebasAleatorio[i],MergeSort,out);
-    //            System.out.println("aleatorio: "+Arrays.toString(JuegoPruebasAleatorio[i]));
-    //            System.out.println("ordenado: "+Arrays.toString(resultado));
-
-                resultado=Analizador.analiza(JuegoPruebasOrdenado[i],MergeSort,out);
-     //           System.out.println("ya ordenado: "+Arrays.toString(JuegoPruebasOrdenado[i]));
-     //           System.out.println("ordenado: "+Arrays.toString(resultado));
-
-                resultado=Analizador.analiza(JuegoPruebasInverso[i],MergeSort,out);
-     //           System.out.println("inverso: "+Arrays.toString(JuegoPruebasInverso[i]));
-     //           System.out.println("ordenado: "+Arrays.toString(resultado));
-                out.println();
+                    }catch (StackOverflowError e){
+                        System.out.println("Desbordamiento de pila. Algoritmo"+NombresAlgoritmos[j]+", juego de pruebas inverso, no soporta el tamaño "+tam);
+                        out.println("Desbordamiento de pila. Algoritmo"+NombresAlgoritmos[j]+", juego de pruebas inverso, no soporta el tamaño "+tam);
+                    }
+                    out.println();
+                }
                 tam*=10;
             }
             out.close();
